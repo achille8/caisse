@@ -1,0 +1,84 @@
+body {
+    background-color: #444 !important;
+    color: white !important;
+}
+
+i.bigIcon {
+    -webkit-text-stroke: 3px;
+}
+
+.debug {
+    border: 1px red solid;
+}
+
+.main-area {
+	flex: auto;
+	overflow-x: none;
+	overflow-y: auto;
+	height: calc(100vh - 100px);
+    scrollbar-color: #fff #222;
+}
+
+.deck {   
+    background-color: #444;
+}
+
+.main-logo {
+    background-image: url(wfs-logo.svg);
+    width: 170px;
+    height: 88px;
+    background-size: 170px;
+    display: inline-block;
+}
+
+.imgBox img {
+    object-fit: cover;
+    object-position: top right;
+}
+
+.imgBox {
+    border: 0;
+    width: 10vh;
+    height: 10vh;
+    min-width: 10vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.buttonBox {
+    border: 0;
+    width: 10vh;
+    height: 10vh;
+    min-width: 10vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.buttonBox .btn {
+    width: 100%;
+    min-width: 100%;
+    height: 100%;
+    font-size: 64px !important; /* clamp(16px, calc(32px + (64 - 32) * ((100vw - 360px) / 720)), 64px); */
+    line-height: 0;
+    --bs-btn-padding-x: 0;
+    --bs-btn-padding-y: 0;
+}
+
+.textBox {
+    font-size: 6vh;
+    white-space: nowrap;  
+    display: flex;
+    align-items: center;    
+}
+
+.quantityBox {
+    width: 20vh;
+    justify-content: center;
+}
+
+.bigTextBox {
+    width: 100%;
+    white-space: nowrap;
+}
