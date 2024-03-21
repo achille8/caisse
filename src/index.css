@@ -24,7 +24,7 @@ i.bigIcon {
 }
 
 .main-logo {
-    background-image: url(wfs-logo.svg);
+    /* background-image: url(wfs-logo.svg); */
     width: 170px;
     height: 88px;
     background-size: 170px;
