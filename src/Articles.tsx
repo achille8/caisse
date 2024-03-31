@@ -1,6 +1,9 @@
 import { Dispatch, createContext, useContext, useEffect, useReducer } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
+import * as EscPosEncoder from './esc-pos-encoder';
+//import * as EscPosEncoder from module("./esc-pos-encoder'");
+//var xxx = require('esc-pos-encoder');
 
 type Article = {
     name: string,
@@ -171,14 +174,12 @@ const Deck = () => {
 };
   
 const ButtonBar = () => {
-    const { articlesDispatch } = useContext(ArticleContext);
-
     const notify = (message: string) => toast(message, { theme: "dark" });
     return (
         <div className="d-flex flex-column">
             <div className="m-1 buttonBox">
                 {/* <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => appCommand$.next({ name: 'print' } as AppCommand) }> */}
-                <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'print_ticket' }) }>
+                <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => print() }>
                     <i className="bi bi-printer-fill"></i>
                 </button>
             </div>
@@ -186,4 +187,80 @@ const ButtonBar = () => {
             <ToastContainer />
         </div>
     );
+};
+
+const print = () => {
+	
+    var SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
+    var WRITE   = '00002af1-0000-1000-8000-00805f9b34fb';   
+    
+    // https://github.com/NielsLeenheer/EscPosEncoder/blob/master/README.md
+        let encoder: any = new EscPosEncoder.default({
+            width: 42
+        });
+    
+        let array01 = encoder
+            .raw([ 0x1c, 0x2e ])
+            .codepage('cp437')
+            .encode();
+    
+        let array02 = encoder
+            .width(4)
+            .height(4)
+            .line('123456789012')
+            .width(3)
+            .height(3)
+            .line('1234567890123456')
+            .encode();
+    
+        let array03 = encoder
+            .width(2)
+            .height(2)
+            .line('123456789012345678901234')
+            .width(1)
+            .height(1)	
+            .line('123456789012345678901234567890123456789012345678')
+            .encode();
+    
+        let array04 = encoder
+            .size('normal')
+            .line('123456789012345678901234567890123456789012345678') //ok
+            .encode();
+    
+        let array05 = encoder
+            .size('small')
+            .line('123456789012345678901234567890123456789012345678901234567890123')
+            .size('normal')
+            .newline()
+            .newline()
+            .newline()
+            .encode();
+        
+        let nav: any = window.navigator;
+        let printCharacteristic: any = null;
+
+        if (printCharacteristic == null) {
+            nav.bluetooth.requestDevice({ filters: [{ services: [SERVICE] }] })
+                .then((device: any) => device.gatt.connect())
+                .then((server: any) => server.getPrimaryService(SERVICE))
+                .then((service: any) => service.getCharacteristic(WRITE))
+                .then((characteristic: any) => printCharacteristic = characteristic)
+                .then(() => {
+                    printCharacteristic.writeValue(array01)
+                        .then(() => printCharacteristic.writeValue(array02))
+                        .then(() => printCharacteristic.writeValue(array03))
+                        .then(() => printCharacteristic.writeValue(array04))
+                        .then(() => printCharacteristic.writeValue(array05))
+                    ;
+                })
+                .catch((err: any) => alert(err));
+        }
+        else {
+            printCharacteristic.writeValue(array01)
+                .then(() => printCharacteristic.writeValue(array02))
+                .then(() => printCharacteristic.writeValue(array03))
+                .then(() => printCharacteristic.writeValue(array04))
+                .then(() => printCharacteristic.writeValue(array05))
+            ;
+        }
 };
