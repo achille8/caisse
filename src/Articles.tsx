@@ -275,9 +275,9 @@ class PrintService {
     }
 }
 
-const displayMessage = (message: string) : void => {
-    toast.info(message, { theme: "dark" });
-};
+// const displayMessage = (message: string) : void => {
+//     toast.info(message, { theme: "dark" });
+// };
 
 const displayError = (message: string) : void => {
     toast.error(message, { theme: "colored" });
