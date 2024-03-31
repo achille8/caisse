@@ -75,6 +75,7 @@ i.bigIcon {
 
 .quantityBox {
     width: 20vh;
+    min-width: 20vh;
     justify-content: center;
 }
 
