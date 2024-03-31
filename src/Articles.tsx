@@ -232,14 +232,33 @@ class PrintService {
             .encode());
 
         lines.push(encoder
+            .bold(true)
+            .invert(true)
             .width(3)
             .height(3)
-            .bold()
             .line('XXXXXXXXXXXXXXXX')
+            .bold(false)
+            .invert(false)
+            .encode());
+
+        lines.push(encoder
+            .newline()
+            .encode());
+    
+        lines.push(encoder
+            .bold(true)
             .width(2)
             .height(2)
-            .bold()
-            .line('Q  Article   Prix')
+            .line('Qté  Article        Prix')
+            .bold(false)
+            .encode());
+
+        lines.push(encoder
+            .bold(true)
+            .width(1)
+            .height(1)
+            .line('================================================')
+            .bold(false)
             .encode());
 
         for (const article of articlesState.articles.filter(a => a.quantity > 0)) {
@@ -249,21 +268,50 @@ class PrintService {
                 + ' '; 
             const price = rightAlignNumber(article.price, 6, 2);
             lines.push(encoder
-                .width(2)
-                .height(2)
-                .bold()
+                .bold(true)
+                .width(3)
+                .height(3)
                 .text(line)
                 .width(1)
                 .height(1)
-                .bold()
                 .line(price)
+                .bold(false)
                 .encode());
         }
 
         lines.push(encoder
-            .newline()
+            .bold(true)
+            .width(1)
+            .height(1)
+            .line('================================================')
+            .bold(false)
             .encode());
 
+        const total = articlesState.articles
+            .filter(a => a.quantity > 0)
+            .reduce((a, b) => a + b.quantity * b.price, 0);
+        const line = leftAlignText("Total", 17) + ' '; 
+        const price = rightAlignNumber(total, 6, 2);
+        lines.push(encoder
+            .bold(true)
+            .width(2)
+            .height(2)
+            .text(line)
+            .width(2)
+            .height(2)
+            .line(price)
+            .bold(false)
+            .encode());
+
+// 4   12    1
+// 3   16    1.5   3
+// 2   24    2
+// 1   48    4     9 6
+        lines.push(encoder
+            .newline()
+            .newline()
+            .newline()
+            .encode());
         try {
             for (const line of lines) {
                 await this.printCharacteristic.writeValue(line);

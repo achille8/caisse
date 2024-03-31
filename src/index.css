@@ -32,8 +32,10 @@ i.bigIcon {
 }
 
 .imgBox img {
-    object-fit: cover;
-    object-position: top right;
+    object-fit: contains;
+    /* object-position: top right; */
+    height: 100%;
+    width: 100%;
 }
 
 .imgBox {
