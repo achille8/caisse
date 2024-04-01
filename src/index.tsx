@@ -12,3 +12,16 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <App />
   </BrowserRouter>
 )
+
+function registerServiceWorker(): void {
+    alert();
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) =>
+                console.log(`Service Worker registration complete, scope: '${registration.scope}'`))
+            .catch((error) =>
+                console.log(`Service Worker registration failed with error: '${error}'`));
+    }
+}
+
+registerServiceWorker();

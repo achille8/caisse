@@ -1,5 +1,5 @@
 import { Dispatch, createContext, useContext, useEffect, useReducer } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import * as EscPosEncoder from './esc-pos-encoder';
 //import * as EscPosEncoder from module("./esc-pos-encoder'");
@@ -14,7 +14,9 @@ type Article = {
 };
 
 interface State {
-  articles: Article[]
+    title1: string,
+    title2: string,
+    articles: Article[]
 }
 
 type Action =
@@ -23,6 +25,8 @@ type Action =
     | { type: 'toggle_visibility', name: string }
     | { type: 'increate_quantity', name: string }
     | { type: 'decreate_quantity', name: string }
+    | { type: 'increate_price', name: string }
+    | { type: 'decreate_price', name: string }
     | { type: 'print_ticket' }
 
 const articlesReducer = (state: State, action: Action): State => {    
@@ -42,29 +46,36 @@ const articlesReducer = (state: State, action: Action): State => {
     };
     case 'toggle_visibility':
       return {
-        ...state,
-        articles: state.articles.map((article) =>
-          article.name === action.name
-            ? { ...article, visible: !article.visible }
-            : article,
-        ),
+            ...state,
+            articles: state.articles.map((a) => a.name === action.name ? { ...a, visible: !a.visible } : a)
     };
     case 'increate_quantity':
-    case 'decreate_quantity':
-        const delta = action.type === 'decreate_quantity' ? -1 : 1;
         return {
             ...state,
-            articles: state.articles.map((article) =>
-                article.name === action.name ? { ...article, quantity: article.quantity + delta } : article,
-        ),
-    };    
+            articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: a.quantity + 1 } : a)
+    };
+    case 'decreate_quantity':
+        return {
+            ...state,
+            articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: Math.max(0, a.quantity - 1) } : a)
+    }; 
+    case 'increate_price':
+        return {
+            ...state,
+            articles: state.articles.map((a) => a.name === action.name ? { ...a, price: a.price + 0.05 } : a)
+    }; 
+    case 'decreate_price':
+        return {
+            ...state,
+            articles: state.articles.map((a) => a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a)
+    }; 
     case 'print_ticket':
         return state;
   }
 };
 
 // https://dev.to/elisealcala/react-context-with-usereducer-and-typescript-4obm
-const initialState: State = { articles: [] };
+const initialState: State = { title1: '', title2: '', articles: [] };
 
 const ArticleContext = createContext<{ articlesState: State; articlesDispatch: Dispatch<Action>; }>({ articlesState: initialState, articlesDispatch: () => null });
 
@@ -78,22 +89,42 @@ const getArticles = async (): Promise<Article[]> => {
 
 export const App = () => {
     return (
-        <div className="App">
-          <header className="xxxcontainer-fluid">
-            <div className="">
-              <Routes>          
+        <ArticleProvider>
+            <Navbar />
+            <Routes>          
                 <Route path="/" element={<ArticleXXX />} />
-                <Route path="/xxx" element={<ArticleXXX />} />
-              </Routes>
-            </div>
-          </header>
+                <Route path="/prices" element={<Prices />} />
+            </Routes>
+        </ArticleProvider>
+    );
+};
+
+const Navbar = () => {
+    return (
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div className="container-fluid">
+          <Link className="navbar-brand" to="/"></Link>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <Link className="nav-link" to="/">Articles</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/prices">Prix</Link>
+              </li>
+            </ul>
+          </div>
         </div>
+      </nav>
     );
 };
 
 export const ArticleXXX = () => {
     return (
-        <ArticleProvider>
+        <>
             <div className="">
                 <TotalLine />
             </div>
@@ -105,7 +136,7 @@ export const ArticleXXX = () => {
                     <ButtonBar />
                 </div>
             </div>
-        </ArticleProvider>
+        </>
     );
 }
 
@@ -132,7 +163,7 @@ const ArticleProvider = ({ children }: any) => {
 
 const TotalLine = () => {
     const { articlesState } = useContext(ArticleContext);
-    const total = articlesState.articles.reduce((a, x) => a + x.quantity * x.price, 0);
+    const total = articlesState.articles.filter(a => a.visible).reduce((a, x) => a + x.quantity * x.price, 0);
 
     return (
         <div className="m-1 textBox">
@@ -146,7 +177,7 @@ const Deck = () => {
 
     return (
         <div className="d-flex flex-column">
-            { articlesState.articles.map((p) => (
+            { articlesState.articles.filter(a => a.visible).map((p) => (
                 <div key={p.name} className={`d-flex`}>
                     <div className="m-1 imgBox">
                         <img className="" src={`assets/${p.image}`}/>
@@ -231,15 +262,29 @@ class PrintService {
             .codepage('cp437')
             .encode());
 
-        lines.push(encoder
-            .bold(true)
-            .invert(true)
-            .width(3)
-            .height(3)
-            .line('XXXXXXXXXXXXXXXX')
-            .bold(false)
-            .invert(false)
-            .encode());
+        if (articlesState.title1 && articlesState.title1.length) {
+            lines.push(encoder
+                .bold(true)
+                .invert(true)
+                .width(3)
+                .height(3)
+                .line(leftAlignText(articlesState.title1, 12))
+                .bold(false)
+                .invert(false)
+                .encode());    
+        }
+
+        if (articlesState.title2 && articlesState.title2.length) {
+            lines.push(encoder
+                .bold(true)
+                .invert(true)
+                .width(3)
+                .height(3)
+                .line(leftAlignText(articlesState.title2, 12))
+                .bold(false)
+                .invert(false)
+                .encode());
+        }
 
         lines.push(encoder
             .newline()
@@ -261,7 +306,7 @@ class PrintService {
             .bold(false)
             .encode());
 
-        for (const article of articlesState.articles.filter(a => a.quantity > 0)) {
+        for (const article of articlesState.articles.filter(a => a.visible && a.quantity > 0)) {
             const line = rightAlignNumber(article.quantity, 2) 
                 + ' ' 
                 + leftAlignText(article.name, 10)
@@ -341,4 +386,48 @@ function rightAlignNumber(num: number, totalWidth: number, decimals: number = 0,
 function leftAlignText(text: string, totalWidth: number, paddingChar = ' ') {
     const padding = Math.max(0, totalWidth - text.length);
     return (text + paddingChar.repeat(padding)).substring(0, totalWidth);
+}
+
+export const Prices = () => {
+    const { articlesState, articlesDispatch } = useContext(ArticleContext);
+
+    return (
+        <>
+        <div className="m-1 textBox">
+            <strong>Prices</strong>
+        </div>            
+        <div className="flex-fill main-area" style={{backgroundColor: "#222"}}>
+        <div className="d-flex flex-column">
+            {articlesState.articles.map((p) => (
+                <div key={p.name} className={`d-flex`}>
+                    <div className="m-1 imgBox">
+                        <img className="" src={`assets/${p.image}`}/>
+                    </div>
+                    <div className="m-1 buttonBox">
+                        <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'increate_price', name: p.name }) }>
+                            <i className="bi bi-plus bigIcon"></i>
+                        </button>
+                    </div>
+                    <div className="m-1 bg-dark bg-gradient textBox priceBox">
+                        <strong>{p.price.toFixed(2)}</strong>
+                    </div>
+                    <div className="m-1 buttonBox">
+                        <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'decreate_price', name: p.name }) }>
+                            <i className="bi bi-dash bigIcon"></i>
+                        </button>
+                    </div>
+                    <div className="m-1 buttonBox">
+                        <button className={"btn bg-gradient rounded-0 " + (p.visible ? "btn-success" : "btn-secondary")} onClick={_ => articlesDispatch({ type: 'toggle_visibility', name: p.name }) }>
+                            { p.visible ? <i className="bi bi-check"></i> : <i className="bi bi-x"></i> }
+                        </button>
+                    </div>
+                    <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
+                        <div className="ms-2">{p.name}</div>
+                    </div>
+                </div>
+            ))}
+        </div>
+        </div>
+        </>
+    );
 }

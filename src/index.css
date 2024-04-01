@@ -76,6 +76,12 @@ i.bigIcon {
 }
 
 .quantityBox {
+    width: 15vh;
+    min-width: 15vh;
+    justify-content: center;
+}
+
+.priceBox {
     width: 20vh;
     min-width: 20vh;
     justify-content: center;
