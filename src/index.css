@@ -15,7 +15,7 @@ i.bigIcon {
 	flex: auto;
 	overflow-x: none;
 	overflow-y: auto;
-	height: calc(100vh - 100px);
+	height: calc(100vh - 170px);
     scrollbar-color: #fff #222;
 }
 
@@ -90,4 +90,18 @@ i.bigIcon {
 .bigTextBox {
     width: 100%;
     white-space: nowrap;
+}
+
+.btn-sml { 
+    padding: 0px 7px !important;
+    height: 28px;
+    width: 80px;
+}
+
+.total-area {
+    background-color: #000 !important;
+}
+
+.navbar {
+  --bs-navbar-padding-y: 0 !important;
 }

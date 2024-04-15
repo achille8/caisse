@@ -1,9 +1,12 @@
-import { Dispatch, createContext, useContext, useEffect, useReducer } from 'react';
+import { Dispatch, createContext, useContext, useEffect } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import * as EscPosEncoder from './esc-pos-encoder';
+import { usePersistedReducer } from './hooks';
 //import * as EscPosEncoder from module("./esc-pos-encoder'");
 //var xxx = require('esc-pos-encoder');
+
+const storageKey = 'Articles';
 
 type Article = {
     name: string,
@@ -30,48 +33,48 @@ type Action =
     | { type: 'print_ticket' }
 
 const articlesReducer = (state: State, action: Action): State => {    
-  switch (action.type) {
-    case 'initialize':
-      return {
-        ...state,
-        articles: action.articles,
-    };
-    case 'add_article':
-      return {
-        ...state,
-        articles: [
-          ...state.articles,
-          { name: action.name, image: action.image, visible: true, quantity: 0 , price: 0 },
-        ],
-    };
-    case 'toggle_visibility':
-      return {
-            ...state,
-            articles: state.articles.map((a) => a.name === action.name ? { ...a, visible: !a.visible } : a)
-    };
-    case 'increate_quantity':
-        return {
-            ...state,
-            articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: a.quantity + 1 } : a)
-    };
-    case 'decreate_quantity':
-        return {
-            ...state,
-            articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: Math.max(0, a.quantity - 1) } : a)
-    }; 
-    case 'increate_price':
-        return {
-            ...state,
-            articles: state.articles.map((a) => a.name === action.name ? { ...a, price: a.price + 0.05 } : a)
-    }; 
-    case 'decreate_price':
-        return {
-            ...state,
-            articles: state.articles.map((a) => a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a)
-    }; 
-    case 'print_ticket':
-        return state;
-  }
+    switch (action.type) {
+        case 'initialize':
+            return {
+                    ...state,
+                    articles: action.articles.map(a => ({ ...a, quantity: 0, visible: true }))
+                };
+        case 'add_article':
+            return {
+                    ...state,
+                    articles: [
+                        ...state.articles,
+                        { name: action.name, image: action.image, visible: true, quantity: 0 , price: 0 }
+                    ]
+                };
+        case 'toggle_visibility':
+            return {
+                    ...state,
+                    articles: state.articles.map((a) => a.name === action.name ? { ...a, visible: !a.visible } : a)
+                };
+        case 'increate_quantity':
+            return {
+                    ...state,
+                    articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: a.quantity + 1 } : a)
+                };
+        case 'decreate_quantity':
+            return {
+                    ...state,
+                    articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: Math.max(0, a.quantity - 1) } : a)
+                }; 
+        case 'increate_price':
+            return {
+                    ...state,
+                    articles: state.articles.map((a) => a.name === action.name ? { ...a, price: a.price + 0.05 } : a)
+                }; 
+        case 'decreate_price':
+            return {
+                    ...state,
+                    articles: state.articles.map((a) => a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a)
+                }; 
+        case 'print_ticket':
+            return state;
+    }
 };
 
 // https://dev.to/elisealcala/react-context-with-usereducer-and-typescript-4obm
@@ -80,12 +83,6 @@ const initialState: State = { title1: '', title2: '', articles: [] };
 const ArticleContext = createContext<{ articlesState: State; articlesDispatch: Dispatch<Action>; }>({ articlesState: initialState, articlesDispatch: () => null });
 
 export const useArticleContext = () => useContext(ArticleContext);
-
-const getArticles = async (): Promise<Article[]> => {
-    const response = await fetch("prices.json");
-    const data = await response.json();
-    return data.map((x: Article) => ({ ...x, quantity: 0, selected: false }))
-};
 
 export const App = () => {
     return (
@@ -101,14 +98,14 @@ export const App = () => {
 
 const Navbar = () => {
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-xs">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/"></Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
           <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav">
+            <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <Link className="nav-link" to="/">Articles</Link>
               </li>
@@ -125,7 +122,7 @@ const Navbar = () => {
 export const ArticleXXX = () => {
     return (
         <>
-            <div className="">
+            <div className="total-area">
                 <TotalLine />
             </div>
             <div className="d-flex">
@@ -141,18 +138,33 @@ export const ArticleXXX = () => {
 }
 
 const ArticleProvider = ({ children }: any) => {   
-    const [articlesState, articlesDispatch] = useReducer(articlesReducer, initialState);
+   // const [articlesState, articlesDispatch] = useReducer(articlesReducer, initialState);
+
+    const [articlesState, articlesDispatch] = usePersistedReducer(articlesReducer, initialState, storageKey);
+   
 
     useEffect(() => {   
-        const get = async () => {
-            const articles = await getArticles();
-            console.log('getArticles');
-            articlesDispatch({ type: 'initialize', articles: articles });
-        };
-        get();      
+        // const articles = getLocalStorageValue('articles');
+        // if (articles) {
+        //     console.log('getArticles from local storage');
+        //     articlesDispatch({ type: 'initialize', articles: articles });
+        // }
+        // else {
+            console.log('getArticles', articlesState, initialState);
+            if (articlesState.articles.length !== 0) {
+                return;
+            }
+            console.log('getArticles get');
+            const get = async () => {
+                const articles = await getArticles();
+                setLocalStorageValue('articles', articles);
+                articlesDispatch({ type: 'initialize', articles: articles });
+            };
+            get();
+        // }
         // return () => {};
-    }, []);   
-
+    }, []);     
+    
     return (
         <ArticleContext.Provider value={{ articlesState, articlesDispatch }}>
             {children}
@@ -160,13 +172,34 @@ const ArticleProvider = ({ children }: any) => {
     );
 };
 
+const getArticles = async (): Promise<Article[]> => {
+    const response = await fetch("prices.json");
+    const data = await response.json();
+    return data.map((x: Article) => ({ ...x, quantity: 0, selected: false }))
+};
+
+
+// const getLocalStorageValue = (key: string) => {
+//     const test = localStorage.getItem(key);
+//     if (!test || test === '') {
+//         return null;
+//     }
+//     return JSON.parse(test);
+// }
+
+
+const setLocalStorageValue = (key: string, value: any ) => {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+
 
 const TotalLine = () => {
     const { articlesState } = useContext(ArticleContext);
     const total = articlesState.articles.filter(a => a.visible).reduce((a, x) => a + x.quantity * x.price, 0);
 
     return (
-        <div className="m-1 textBox">
+        <div className="p-1 textBox">
             <strong>Total: {total} €</strong>
         </div>
     );
@@ -393,9 +426,11 @@ export const Prices = () => {
 
     return (
         <>
-        <div className="m-1 textBox">
-            <strong>Prices</strong>
-        </div>            
+        <div className="total-area">
+          <div className="p-1 textBox">
+              <strong>Prices</strong>
+          </div>  
+        </div>          
         <div className="flex-fill main-area" style={{backgroundColor: "#222"}}>
         <div className="d-flex flex-column">
             {articlesState.articles.map((p) => (
