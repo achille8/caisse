@@ -259,6 +259,11 @@ class PrintService {
 
     private static printCharacteristic: any = null;
 
+    static get PrinterName() {
+      return this.printCharacteristic?.service.device.name;
+    }
+    //
+    
     static async printTicket(articlesState: State) {
         if (this.printCharacteristic) {
             this.print(articlesState)
@@ -275,11 +280,20 @@ class PrintService {
         var SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
         var WRITE   = '00002af1-0000-1000-8000-00805f9b34fb';  
         let nav: any = window.navigator;
+
         return nav.bluetooth.requestDevice({ filters: [{ services: [SERVICE] }] })
-            .then((device: any) => device.gatt.connect())
-            .then((server: any) => server.getPrimaryService(SERVICE))
-            .then((service: any) => service.getCharacteristic(WRITE))
-            .then((characteristic: any) => this.printCharacteristic = characteristic)
+            .then((device: any) => { 
+              return device.gatt.connect(); 
+            })
+            .then((server: any) => { 
+              return server.getPrimaryService(SERVICE); 
+            })
+            .then((service: any) => { 
+              return service.getCharacteristic(WRITE); 
+            })
+            .then((characteristic: any) => { 
+              return this.printCharacteristic = characteristic;
+            });
     }
 
     private static async print(articlesState: State) {
