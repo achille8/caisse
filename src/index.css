@@ -1,6 +1,9 @@
 body {
     background-color: #444 !important;
     color: white !important;
+    height: 100%;
+    width: 100%;
+    margin: 0; 
 }
 
 i.bigIcon {
@@ -13,10 +16,10 @@ i.bigIcon {
 
 .main-area {
 	flex: auto;
-	overflow-x: none;
+	overflow-x: hidden;
 	overflow-y: auto;
-	height: calc(100vh - 150px);
-    scrollbar-color: #fff #222;
+  height: calc(91vh - 50px); 
+  scrollbar-color: #fff #222;
 }
 
 .deck {   

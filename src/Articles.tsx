@@ -141,7 +141,6 @@ const ArticleProvider = ({ children }: any) => {
    // const [articlesState, articlesDispatch] = useReducer(articlesReducer, initialState);
 
     const [articlesState, articlesDispatch] = usePersistedReducer(articlesReducer, initialState, storageKey);
-   
 
     useEffect(() => {   
         // const articles = getLocalStorageValue('articles');
@@ -178,7 +177,6 @@ const getArticles = async (): Promise<Article[]> => {
     return data.map((x: Article) => ({ ...x, quantity: 0, selected: false }))
 };
 
-
 // const getLocalStorageValue = (key: string) => {
 //     const test = localStorage.getItem(key);
 //     if (!test || test === '') {
@@ -187,12 +185,9 @@ const getArticles = async (): Promise<Article[]> => {
 //     return JSON.parse(test);
 // }
 
-
 const setLocalStorageValue = (key: string, value: any ) => {
     localStorage.setItem(key, JSON.stringify(value));
 }
-
-
 
 const TotalLine = () => {
     const { articlesState } = useContext(ArticleContext);
@@ -239,8 +234,6 @@ const Deck = () => {
   
 const ButtonBar = () => {
     const { articlesState } = useContext(ArticleContext);
-
-    const notify = (message: string) => toast(message, { theme: "dark" });
     return (
         <div className="d-flex flex-column">
             <div className="m-1 buttonBox">
@@ -249,7 +242,6 @@ const ButtonBar = () => {
                     <i className="bi bi-printer-fill"></i>
                 </button>
             </div>
-            <button onClick={_ => notify("Wow so easy 3!")}>Notify!</button>
             <ToastContainer />
         </div>
     );
@@ -262,16 +254,17 @@ class PrintService {
     static get PrinterName() {
       return this.printCharacteristic?.service.device.name;
     }
-    //
     
     static async printTicket(articlesState: State) {
         if (this.printCharacteristic) {
             this.print(articlesState)
-                .catch((err: any) => displayError(err));
+              .then(() => displayMessage("Ticket imprimé"))
+              .catch((err: any) => displayError(err));
         } else {
             this.initialize()
-                .then(() => this.print(articlesState))
-                .catch((err: any) => displayError(err));
+              .then(() => this.print(articlesState))
+              .then(() => displayMessage("Ticket imprimé"))
+              .catch((err: any) => displayError(err));
         }
     }
 
@@ -415,14 +408,13 @@ class PrintService {
     }
 }
 
-// const displayMessage = (message: string) : void => {
-//     toast.info(message, { theme: "dark" });
-// };
-
-const displayError = (message: string) : void => {
-    toast.error(message, { theme: "colored" });
+const displayMessage = (message: string) : void => {
+    toast.info(message, { theme: "dark" });
 };
 
+const displayError = (message: string) : void => {
+  toast.error(message, { theme: "colored" });
+};
 
 function rightAlignNumber(num: number, totalWidth: number, decimals: number = 0, paddingChar = ' ') {
     const numberString = num.toFixed(decimals);
