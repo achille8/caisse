@@ -31,6 +31,7 @@ type Action =
     | { type: 'increate_price', name: string }
     | { type: 'decreate_price', name: string }
     | { type: 'print_ticket' }
+    | { type: 'clear' }
 
 const articlesReducer = (state: State, action: Action): State => {    
     switch (action.type) {
@@ -71,6 +72,11 @@ const articlesReducer = (state: State, action: Action): State => {
             return {
                     ...state,
                     articles: state.articles.map((a) => a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a)
+                }; 
+        case 'clear':
+            return {
+                    ...state,
+                    articles: state.articles.map((a) => ({ ...a, quantity: 0 }))
                 }; 
         case 'print_ticket':
             return state;
@@ -133,6 +139,11 @@ export const ArticleXXX = () => {
                     <ButtonBar />
                 </div>
             </div>
+            {/* <div>
+              <div className="">
+                {PrintService.PrinterName}
+              </div>
+            </div> */}
         </>
     );
 }
@@ -233,14 +244,18 @@ const Deck = () => {
 };
   
 const ButtonBar = () => {
-    const { articlesState } = useContext(ArticleContext);
+  const { articlesState, articlesDispatch } = useContext(ArticleContext);
     return (
         <div className="d-flex flex-column">
             <div className="m-1 buttonBox">
-                {/* <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => appCommand$.next({ name: 'print' } as AppCommand) }> */}
-                <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => PrintService.printTicket(articlesState) }>
-                    <i className="bi bi-printer-fill"></i>
+                <button className="btn btn-success bg-gradient rounded-0" onClick={_ => PrintService.printTicket(articlesState) }>
+                    <i className="bi bi-printer"></i>
                 </button>
+            </div>
+            <div className="m-1 buttonBox">
+                <button className="btn btn-warning bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'clear' }) }>
+                    <i className="bi bi-trash3"></i>
+                </button>                
             </div>
             <ToastContainer />
         </div>
@@ -434,40 +449,40 @@ export const Prices = () => {
         <>
         <div className="total-area">
           <div className="p-1 textBox">
-              <strong>Prices</strong>
+              <strong>Prix</strong>
           </div>  
         </div>          
         <div className="flex-fill main-area" style={{backgroundColor: "#222"}}>
-        <div className="d-flex flex-column">
-            {articlesState.articles.map((p) => (
-                <div key={p.name} className={`d-flex`}>
-                    <div className="m-1 imgBox">
-                        <img className="" src={`assets/${p.image}`}/>
-                    </div>
-                    <div className="m-1 buttonBox">
-                        <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'increate_price', name: p.name }) }>
-                            <i className="bi bi-plus bigIcon"></i>
-                        </button>
-                    </div>
-                    <div className="m-1 bg-dark bg-gradient textBox priceBox">
-                        <strong>{p.price.toFixed(2)}</strong>
-                    </div>
-                    <div className="m-1 buttonBox">
-                        <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'decreate_price', name: p.name }) }>
-                            <i className="bi bi-dash bigIcon"></i>
-                        </button>
-                    </div>
-                    <div className="m-1 buttonBox">
-                        <button className={"btn bg-gradient rounded-0 " + (p.visible ? "btn-success" : "btn-secondary")} onClick={_ => articlesDispatch({ type: 'toggle_visibility', name: p.name }) }>
-                            { p.visible ? <i className="bi bi-check"></i> : <i className="bi bi-x"></i> }
-                        </button>
-                    </div>
-                    <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
-                        <div className="ms-2">{p.name}</div>
-                    </div>
-                </div>
-            ))}
-        </div>
+          <div className="d-flex flex-column">
+              {articlesState.articles.map((p) => (
+                  <div key={p.name} className={`d-flex`}>
+                      <div className="m-1 imgBox">
+                          <img className="" src={`assets/${p.image}`}/>
+                      </div>
+                      <div className="m-1 buttonBox">
+                          <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'increate_price', name: p.name }) }>
+                              <i className="bi bi-plus bigIcon"></i>
+                          </button>
+                      </div>
+                      <div className="m-1 bg-dark bg-gradient textBox priceBox">
+                          <strong>{p.price.toFixed(2)}</strong>
+                      </div>
+                      <div className="m-1 buttonBox">
+                          <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'decreate_price', name: p.name }) }>
+                              <i className="bi bi-dash bigIcon"></i>
+                          </button>
+                      </div>
+                      <div className="m-1 buttonBox">
+                          <button className={"btn bg-gradient rounded-0 " + (p.visible ? "btn-success" : "btn-secondary")} onClick={_ => articlesDispatch({ type: 'toggle_visibility', name: p.name }) }>
+                              { p.visible ? <i className="bi bi-check"></i> : <i className="bi bi-x"></i> }
+                          </button>
+                      </div>
+                      <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
+                          <div className="ms-2">{p.name}</div>
+                      </div>
+                  </div>
+              ))}
+          </div>
         </div>
         </>
     );
