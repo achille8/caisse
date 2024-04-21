@@ -31,6 +31,8 @@ type Action =
     | { type: 'increate_price', name: string }
     | { type: 'decreate_price', name: string }
     | { type: 'print_ticket' }
+    | { type: 'set_title1', title1: string }
+    | { type: 'set_title2', title2: string }
     | { type: 'clear' }
 
 const articlesReducer = (state: State, action: Action): State => {    
@@ -78,6 +80,10 @@ const articlesReducer = (state: State, action: Action): State => {
                     ...state,
                     articles: state.articles.map((a) => ({ ...a, quantity: 0 }))
                 }; 
+        case 'set_title1':
+            return { ...state, title1: action.title1 }; 
+        case 'set_title2':
+            return { ...state, title2: action.title2 }; 
         case 'print_ticket':
             return state;
     }
@@ -97,6 +103,7 @@ export const App = () => {
             <Routes>          
                 <Route path="/" element={<ArticleXXX />} />
                 <Route path="/prices" element={<Prices />} />
+                <Route path="/parameters" element={<Parameters />} />
             </Routes>
         </ArticleProvider>
     );
@@ -117,6 +124,9 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/prices">Prix</Link>
+              </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/parameters">Paramètres</Link>
               </li>
             </ul>
           </div>
@@ -323,7 +333,7 @@ class PrintService {
                 .invert(true)
                 .width(3)
                 .height(3)
-                .line(leftAlignText(articlesState.title1, 12))
+                .line(articlesState.title1)
                 .bold(false)
                 .invert(false)
                 .encode());    
@@ -335,7 +345,7 @@ class PrintService {
                 .invert(true)
                 .width(3)
                 .height(3)
-                .line(leftAlignText(articlesState.title2, 12))
+                .line(articlesState.title2)
                 .bold(false)
                 .invert(false)
                 .encode());
@@ -349,7 +359,7 @@ class PrintService {
             .bold(true)
             .width(2)
             .height(2)
-            .line('Qté  Article        Prix')
+            .line('Qte  Article        Prix')
             .bold(false)
             .encode());
 
@@ -366,7 +376,7 @@ class PrintService {
                 + ' ' 
                 + leftAlignText(article.name, 10)
                 + ' '; 
-            const price = rightAlignNumber(article.price, 6, 2);
+            const price = rightAlignNumber(article.quantity * article.price, 6, 2);
             lines.push(encoder
                 .bold(true)
                 .width(3)
@@ -402,20 +412,14 @@ class PrintService {
             .line(price)
             .bold(false)
             .encode());
-
-// 4   12    1
-// 3   16    1.5   3
-// 2   24    2
-// 1   48    4     9 6
         lines.push(encoder
-            .newline()
-            .newline()
-            .newline()
-            .newline()
-            .newline()
+            .line('')
+            .line('')
+            .line('')
+            .line('')
             .cut()
             .encode());
-        try {
+          try {
             for (const line of lines) {
                 await this.printCharacteristic.writeValue(line);
             }
@@ -489,4 +493,47 @@ export const Prices = () => {
         </div>
         </>
     );
+}
+
+export const Parameters = () => {
+  const { articlesState, articlesDispatch } = useContext(ArticleContext);
+
+  return (
+      <>
+      <div className="xtotal-area">
+        <div className="p-1 textBox">
+            <strong>Paramètres</strong>
+        </div>  
+      </div> 
+      <div className="" style={{ width: 400 }}>
+
+        <div className="form-group row m-2">
+          <label htmlFor="name" className="col-3 col-form-label">Titre 1</label>
+          <div className="col">
+            <input
+              type="text"
+              id="title1"
+              className="form-control"
+              value={articlesState.title1 || ""}
+              onChange={e => articlesDispatch({ type: 'set_title1', title1: e.target.value }) }
+            />
+          </div>
+        </div>
+
+        <div className="form-group row m-2">
+          <label htmlFor="name" className="col-3 col-form-label">Titre 2</label>
+          <div className="col">
+            <input
+              type="text"
+              id="title2"
+              className="form-control"
+              value={articlesState.title2 || ""}
+              onChange={e => articlesDispatch({ type: 'set_title2', title2: e.target.value }) }
+            />
+          </div>
+        </div>
+
+      </div>
+      </>
+  );
 }
