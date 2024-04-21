@@ -411,6 +411,7 @@ class PrintService {
             .newline()
             .newline()
             .newline()
+            .cut()
             .encode());
         try {
             for (const line of lines) {

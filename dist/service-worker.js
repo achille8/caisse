@@ -30,8 +30,8 @@ self.addEventListener('fetch', async event => {
 class ServiceWorkerOne {
 
     static run() {
-        // addEventListener('install', ServiceWorkerOne.onInstalled);
-        // addEventListener('fetch', ServiceWorkerOne.onFetched);
+        addEventListener('install', ServiceWorkerOne.onInstalled);
+        addEventListener('fetch', ServiceWorkerOne.onFetched);
     }
 
     static onInstalled = (event) => {
@@ -48,14 +48,11 @@ class ServiceWorkerOne {
     static onFetched = (event) => {
         event.respondWith(
             caches.match(event.request).then(matchResponse => {
-                console.log('cache match', event.request);
+                console.log('cache match', event.request.url, matchResponse);
                 
                 return matchResponse || fetch(event.request).then(fetchResponse => {
                     return caches.open('v1.0').then(cache => {
-                        console.log('cache put', event.request);
-                        if (event.request.url.endsWith(".jfif")) {
-                            var x = 0;
-                        }                        
+                        console.log('cache put', event.request.url);                    
                         cache.put(event.request, fetchResponse.clone());
                         return fetchResponse;
                     });
