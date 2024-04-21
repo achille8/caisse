@@ -248,12 +248,12 @@ const ButtonBar = () => {
     return (
         <div className="d-flex flex-column">
             <div className="m-1 buttonBox">
-                <button className="btn btn-warning bg-gradient rounded-0" onClick={_ => PrintService.printTicket(articlesState) }>
+                <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => PrintService.printTicket(articlesState) }>
                     <i className="bi bi-printer"></i>
                 </button>
             </div>
             <div className="m-1 buttonBox">
-                <button className="btn btn-success bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'clear' }) }>
+                <button className="btn btn-danger bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'clear' }) }>
                     <i className="bi bi-trash3"></i>
                 </button>                
             </div>
