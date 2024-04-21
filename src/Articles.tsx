@@ -411,6 +411,8 @@ class PrintService {
             .newline()
             .newline()
             .newline()
+            .newline()
+            .newline()
             .cut()
             .encode());
         try {
