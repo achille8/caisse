@@ -258,7 +258,11 @@ const ButtonBar = () => {
     return (
         <div className="d-flex flex-column">
             <div className="m-1 buttonBox">
-                <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => PrintService.printTicket(articlesState) }>
+                <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => 
+                  PrintService.printTicket(articlesState)
+                    .then(_ => articlesDispatch({ type: 'clear' }) )
+                    .catch((err: any) => displayError(err))
+                }>
                     <i className="bi bi-printer"></i>
                 </button>
             </div>
@@ -280,16 +284,16 @@ class PrintService {
       return this.printCharacteristic?.service.device.name;
     }
     
-    static async printTicket(articlesState: State) {
+    static async printTicket(articlesState: State): Promise<void> {
         if (this.printCharacteristic) {
-            this.print(articlesState)
-              .then(() => displayMessage("Ticket imprimé"))
-              .catch((err: any) => displayError(err));
+            return this.print(articlesState)
+              .then(() => displayMessage("Ticket imprimé"));
+//              .catch((err: any) => displayError(err));
         } else {
-            this.initialize()
+            return this.initialize()
               .then(() => this.print(articlesState))
-              .then(() => displayMessage("Ticket imprimé"))
-              .catch((err: any) => displayError(err));
+              .then(() => displayMessage("Ticket imprimé"));
+  //            .catch((err: any) => displayError(err));
         }
     }
 
