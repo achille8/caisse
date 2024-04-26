@@ -138,7 +138,7 @@ const Navbar = () => {
 export const ArticleXXX = () => {
     return (
         <>
-            <div className="total-area">
+            <div className="header-area">
                 <TotalLine />
             </div>
             <div className="d-flex">
@@ -288,12 +288,10 @@ class PrintService {
         if (this.printCharacteristic) {
             return this.print(articlesState)
               .then(() => displayMessage("Ticket imprimé"));
-//              .catch((err: any) => displayError(err));
         } else {
             return this.initialize()
               .then(() => this.print(articlesState))
               .then(() => displayMessage("Ticket imprimé"));
-  //            .catch((err: any) => displayError(err));
         }
     }
 
@@ -458,7 +456,7 @@ export const Prices = () => {
 
     return (
         <>
-        <div className="total-area">
+        <div className="header-area">
           <div className="p-1 textBox">
               <strong>Prix</strong>
           </div>  
@@ -504,12 +502,12 @@ export const Parameters = () => {
 
   return (
       <>
-      <div className="xtotal-area">
+      <div className="header-area">
         <div className="p-1 textBox">
             <strong>Paramètres</strong>
         </div>  
       </div> 
-      <div className="" style={{ width: 400 }}>
+      <div className="m-4" style={{ width: 400 }}>
 
         <div className="form-group row m-2">
           <label htmlFor="name" className="col-3 col-form-label">Titre 1</label>
