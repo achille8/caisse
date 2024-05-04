@@ -649,7 +649,7 @@ const AddArticleDialog = ({onOk, onCancel}: any) => {
                     </div>
                 </div>
                 <div className="col">
-                  <label for="image-name" className="col-form-label">Nom:</label>
+                  <label htmlFor="image-name" className="col-form-label">Nom:</label>
                   <input type="text" className="form-control" id="image-name" maxLength={16} onChange={e => setName(e.target.value)} />
                 </div>
               </div>
