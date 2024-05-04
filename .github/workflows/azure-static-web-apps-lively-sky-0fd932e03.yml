@@ -33,6 +33,7 @@ jobs:
           # is_static_export: true
           output_location: "/dist" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
+          app_build_command: 'npm run build'
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
