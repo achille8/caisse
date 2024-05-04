@@ -19,7 +19,7 @@ i.bigIcon {
 	overflow-x: hidden;
 	overflow-y: auto;
   height: calc(91vh - 50px); 
-  scrollbar-color: #fff #222;
+  scrollbar-color: #fff #005;
 }
 
 .deck {   
@@ -107,4 +107,8 @@ i.bigIcon {
 
 .navbar {
   --bs-navbar-padding-y: 0 !important;
+}
+
+.modal-header, .modal-body, .modal-footer {
+  color: #000;
 }

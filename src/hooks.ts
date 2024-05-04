@@ -20,8 +20,6 @@ export function usePersistedReducer<State, Action>(
   storageKey: string
 ): [State, action: React.Dispatch<Action>] {
 
-    console.log('usePersistedReducer 1');
-
   const [state, dispatch] = useReducer(reducer, initialState, init);
   const prevState = usePrevious(state);
 
@@ -41,13 +39,10 @@ export function usePersistedReducer<State, Action>(
   useEffect(() => {
     const stateEqual = deepEqual(prevState, state)
     if (!stateEqual) {
-        console.log('usePersistedReducer useEffect state not equal');
         const stringifiedState = JSON.stringify(state)
         localStorage.setItem(storageKey, stringifiedState)
     }
   }, [state]);
-
-  console.log('usePersistedReducer 2');
 
   return [ state, dispatch ];
 }

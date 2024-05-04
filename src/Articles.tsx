@@ -1,8 +1,11 @@
-import { Dispatch, createContext, useContext, useEffect } from 'react';
+import { Dispatch, createContext, useContext, useEffect, useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import * as EscPosEncoder from './esc-pos-encoder';
 import { usePersistedReducer } from './hooks';
+import ConfirmationModalContextProvider, { useConfirmationModalContext } from './confirm';
+
+
 //import * as EscPosEncoder from module("./esc-pos-encoder'");
 //var xxx = require('esc-pos-encoder');
 
@@ -24,7 +27,8 @@ interface State {
 
 type Action =
     | { type: 'initialize', articles: Article[] }
-    | { type: 'add_article', name: string; image: string }
+    | { type: 'add_article', name: string, image: string }
+    | { type: 'remove_article', name: string }
     | { type: 'toggle_visibility', name: string }
     | { type: 'increate_quantity', name: string }
     | { type: 'decreate_quantity', name: string }
@@ -40,7 +44,7 @@ const articlesReducer = (state: State, action: Action): State => {
         case 'initialize':
             return {
                     ...state,
-                    articles: action.articles.map(a => ({ ...a, quantity: 0, visible: true }))
+                    articles: action.articles.map(a => ({ ...a, image: `assets/${a.image}`, quantity: 0, visible: true }))
                 };
         case 'add_article':
             return {
@@ -50,35 +54,40 @@ const articlesReducer = (state: State, action: Action): State => {
                         { name: action.name, image: action.image, visible: true, quantity: 0 , price: 0 }
                     ]
                 };
+        case 'remove_article':
+            return { 
+                    ...state,
+                    articles: state.articles.filter(a => a.name !== action.name)
+                  };
         case 'toggle_visibility':
             return {
                     ...state,
-                    articles: state.articles.map((a) => a.name === action.name ? { ...a, visible: !a.visible } : a)
+                    articles: state.articles.map(a => a.name === action.name ? { ...a, visible: !a.visible } : a)
                 };
         case 'increate_quantity':
             return {
                     ...state,
-                    articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: a.quantity + 1 } : a)
+                    articles: state.articles.map(a => a.name === action.name ? { ...a, quantity: a.quantity + 1 } : a)
                 };
         case 'decreate_quantity':
             return {
                     ...state,
-                    articles: state.articles.map((a) => a.name === action.name ? { ...a, quantity: Math.max(0, a.quantity - 1) } : a)
+                    articles: state.articles.map(a => a.name === action.name ? { ...a, quantity: Math.max(0, a.quantity - 1) } : a)
                 }; 
         case 'increate_price':
             return {
                     ...state,
-                    articles: state.articles.map((a) => a.name === action.name ? { ...a, price: a.price + 0.05 } : a)
+                    articles: state.articles.map(a => a.name === action.name ? { ...a, price: a.price + 0.05 } : a)
                 }; 
         case 'decreate_price':
             return {
                     ...state,
-                    articles: state.articles.map((a) => a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a)
+                    articles: state.articles.map(a => a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a)
                 }; 
         case 'clear':
             return {
                     ...state,
-                    articles: state.articles.map((a) => ({ ...a, quantity: 0 }))
+                    articles: state.articles.map(a => ({ ...a, quantity: 0 }))
                 }; 
         case 'set_title1':
             return { ...state, title1: action.title1 }; 
@@ -90,7 +99,7 @@ const articlesReducer = (state: State, action: Action): State => {
 };
 
 // https://dev.to/elisealcala/react-context-with-usereducer-and-typescript-4obm
-const initialState: State = { title1: '', title2: '', articles: [] };
+const initialState: State = { title1: '****************', title2: '****************', articles: [] };
 
 const ArticleContext = createContext<{ articlesState: State; articlesDispatch: Dispatch<Action>; }>({ articlesState: initialState, articlesDispatch: () => null });
 
@@ -98,6 +107,7 @@ export const useArticleContext = () => useContext(ArticleContext);
 
 export const App = () => {
     return (
+        <ConfirmationModalContextProvider>
         <ArticleProvider>
             <Navbar />
             <Routes>          
@@ -106,6 +116,7 @@ export const App = () => {
                 <Route path="/parameters" element={<Parameters />} />
             </Routes>
         </ArticleProvider>
+        </ConfirmationModalContextProvider>
     );
 };
 
@@ -170,11 +181,9 @@ const ArticleProvider = ({ children }: any) => {
         //     articlesDispatch({ type: 'initialize', articles: articles });
         // }
         // else {
-            console.log('getArticles', articlesState, initialState);
             if (articlesState.articles.length !== 0) {
                 return;
             }
-            console.log('getArticles get');
             const get = async () => {
                 const articles = await getArticles();
                 setLocalStorageValue('articles', articles);
@@ -229,7 +238,7 @@ const Deck = () => {
             { articlesState.articles.filter(a => a.visible).map((p) => (
                 <div key={p.name} className={`d-flex`}>
                     <div className="m-1 imgBox">
-                        <img className="" src={`assets/${p.image}`}/>
+                        <img className="" src={p.image}/>
                     </div>
                     <div className="m-1 buttonBox">
                         <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'increate_quantity', name: p.name }) }>
@@ -454,45 +463,105 @@ function leftAlignText(text: string, totalWidth: number, paddingChar = ' ') {
 export const Prices = () => {
     const { articlesState, articlesDispatch } = useContext(ArticleContext);
 
+    const increatePrice = (name: string): void => {
+        articlesDispatch({ type: 'increate_price', name: name });
+    }
+
+    const decreatePrice = (name: string): void => {
+        articlesDispatch({ type: 'decreate_price', name: name });
+    }
+
+    const toggleVisibility = (name: string): void => {
+        articlesDispatch({ type: 'toggle_visibility', name: name });
+    }
+
+    const modalContext = useConfirmationModalContext();
+
+    const removeArticle = async (name: string): Promise<void> => {
+        const result = await modalContext.showConfirmation(
+          'Confirer la suppression',  
+          `Supprimer ${name} ?`
+        );
+        if (result) {
+          articlesDispatch({ type: 'remove_article', name: name });
+        }
+    }
+
+    const [show, setShow] = useState(false);
+
+    const addArticle = (): void => {
+      setShow(true);
+    }    
+
+    const onOk = (name: string, imgBlob: Blob): void => {
+        setShow(false);
+        save(name, imgBlob);
+    }
+
+    const onCancel = (): void => {
+        setShow(false);
+    }
+
+    const save = async (name: string, imgBlob: Blob, ) => {
+      const path = `assets/${name}.png`;
+      caches.open('v1.0').then(cache => {
+        const response = new Response( imgBlob, { status: 201, headers: {'Content-Type': 'png'} });
+        cache.put(path, response).then(_ => {
+            setTimeout(() => {
+              articlesDispatch({ type: 'add_article', name: name, image: path });   
+            }, 0);        
+        });
+      });
+    }    
+
     return (
         <>
-        <div className="header-area">
-          <div className="p-1 textBox">
-              <strong>Prix</strong>
-          </div>  
-        </div>          
-        <div className="flex-fill main-area" style={{backgroundColor: "#222"}}>
-          <div className="d-flex flex-column">
-              {articlesState.articles.map((p) => (
-                  <div key={p.name} className={`d-flex`}>
-                      <div className="m-1 imgBox">
-                          <img className="" src={`assets/${p.image}`}/>
+            <div className="header-area d-flex">
+                <div className="p-1 textBox"> 
+                    <strong>Prix</strong>
+                </div>
+                <button className="ms-auto" onClick={async _ => await addArticle()}>Ajouter</button>
+            </div>
+
+            {show && <AddArticleDialog onOk={onOk} onCancel={onCancel} />}
+
+            <div className="flex-fill main-area" style={{backgroundColor: "#222"}}>
+              <div className="d-flex flex-column">
+                  {articlesState.articles.map(p => (
+                      <div key={p.name} className={`d-flex`}>
+                          <div className="m-1 imgBox">
+                              <img className="" src={p.image}/>
+                          </div>
+                          <div className="m-1 buttonBox">
+                              <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => increatePrice(p.name)}>
+                                  <i className="bi bi-plus bigIcon"></i>
+                              </button>
+                          </div>
+                          <div className="m-1 bg-dark bg-gradient textBox priceBox">
+                              <strong>{p.price.toFixed(2)}</strong>
+                          </div>
+                          <div className="m-1 buttonBox">
+                              <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => decreatePrice(p.name)}>
+                                  <i className="bi bi-dash bigIcon"></i>
+                              </button>
+                          </div>
+                          <div className="m-1 buttonBox">
+                              <button className={"btn bg-gradient rounded-0 " + (p.visible ? "btn-success" : "btn-secondary")} onClick={_ => toggleVisibility(p.name)}>
+                                  { p.visible ? <i className="bi bi-check"></i> : <i className="bi bi-x"></i> }
+                              </button>
+                          </div>
+                          <div className="m-1 buttonBox">
+                              <button className={"btn bg-gradient rounded-0 btn-danger"} onClick={async _ => await removeArticle(p.name)}>
+                                  <i className="bi bi-trash3"></i>
+                              </button>
+                          </div>
+                          <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
+                              <div className="ms-2">{p.name}</div>
+                          </div>
                       </div>
-                      <div className="m-1 buttonBox">
-                          <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'increate_price', name: p.name }) }>
-                              <i className="bi bi-plus bigIcon"></i>
-                          </button>
-                      </div>
-                      <div className="m-1 bg-dark bg-gradient textBox priceBox">
-                          <strong>{p.price.toFixed(2)}</strong>
-                      </div>
-                      <div className="m-1 buttonBox">
-                          <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'decreate_price', name: p.name }) }>
-                              <i className="bi bi-dash bigIcon"></i>
-                          </button>
-                      </div>
-                      <div className="m-1 buttonBox">
-                          <button className={"btn bg-gradient rounded-0 " + (p.visible ? "btn-success" : "btn-secondary")} onClick={_ => articlesDispatch({ type: 'toggle_visibility', name: p.name }) }>
-                              { p.visible ? <i className="bi bi-check"></i> : <i className="bi bi-x"></i> }
-                          </button>
-                      </div>
-                      <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
-                          <div className="ms-2">{p.name}</div>
-                      </div>
-                  </div>
-              ))}
-          </div>
-        </div>
+                  ))}
+              </div>
+            </div>
         </>
     );
 }
@@ -515,6 +584,7 @@ export const Parameters = () => {
             <input
               type="text"
               id="title1"
+              maxLength={16}
               className="form-control"
               value={articlesState.title1 || ""}
               onChange={e => articlesDispatch({ type: 'set_title1', title1: e.target.value }) }
@@ -528,6 +598,7 @@ export const Parameters = () => {
             <input
               type="text"
               id="title2"
+              maxLength={16}
               className="form-control"
               value={articlesState.title2 || ""}
               onChange={e => articlesDispatch({ type: 'set_title2', title2: e.target.value }) }
@@ -537,5 +608,60 @@ export const Parameters = () => {
 
       </div>
       </>
+  );
+}
+
+const AddArticleDialog = ({onOk, onCancel}: any) => {
+
+  const [name, setName] = useState<string>('');
+  const [imgUrl, setImgUrl] = useState<string>('');
+  const [imgBlob, setImgBlob] = useState<Blob>();
+
+  const handleOk = () => {
+      onOk(name, imgBlob);
+  };
+
+  const handleCancel = () => {
+      onCancel();
+  };
+
+  const pasteImg = async () => {
+      const clipboardItems = await navigator.clipboard.read();
+      const blob = await clipboardItems[0].getType('image/png');
+      setImgBlob(blob);
+      const data = URL.createObjectURL(blob)
+      setImgUrl(data);
+  }  
+
+  return (
+    <div className="modal" style={{ display: 'block' }}>
+      <div className="modal-dialog">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Ajouter un article</h5>
+          </div>
+          <div className="modal-body">
+            <form className="container-fluid">
+              <div className="row">
+                <div className="col-4">
+                    <div className="m-1 imgBox">
+                        <img src={imgUrl} className='img-thumbnail' alt="" />
+                    </div>
+                </div>
+                <div className="col">
+                  <label for="image-name" className="col-form-label">Nom:</label>
+                  <input type="text" className="form-control" id="image-name" maxLength={16} onChange={e => setName(e.target.value)} />
+                </div>
+              </div>
+            </form>
+          </div>
+          <div className="modal-footer debug">
+            <button type="button" onClick={async _ => await pasteImg()} className="btn btn-primary me-auto">Coller Image</button>
+            <button type="button" onClick={handleOk} disabled={!(name.length && imgUrl.length)} className="btn btn-primary">Sauver</button>
+            <button type="button" onClick={handleCancel} className="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
