@@ -236,24 +236,24 @@ const Deck = () => {
     return (
         <div className="d-flex flex-column">
             { articlesState.articles.filter(a => a.visible).map((p) => (
-                <div key={p.name} className={`d-flex`}>
-                    <div className="m-1 imgBox">
+                <div key={p.name} className="d-flex">
+                    <div className="imgBox">
                         <img className="" src={p.image}/>
                     </div>
-                    <div className="m-1 buttonBox">
+                    <div className="buttonBox">
                         <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'increate_quantity', name: p.name }) }>
                             <i className="bi bi-plus bigIcon"></i>
                         </button>
                     </div>
-                    <div className="m-1 bg-dark bg-gradient textBox quantityBox">
+                    <div className="bg-dark bg-gradient textBox quantityBox">
                         <strong>{p.quantity === 0 ? '' : p.quantity}</strong>
                     </div>
-                    <div className="m-1 buttonBox">
+                    <div className="buttonBox">
                         <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'decreate_quantity', name: p.name }) }>
                             <i className="bi bi-dash bigIcon"></i>
                         </button>
                     </div>
-                    <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
+                    <div className="bg-dark bg-gradient textBox bigTextBox">
                         <div className="ms-2">{p.name}</div>
                     </div>
                 </div>
