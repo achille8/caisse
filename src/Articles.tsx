@@ -44,7 +44,7 @@ const articlesReducer = (state: State, action: Action): State => {
         case 'initialize':
             return {
                     ...state,
-                    articles: action.articles.map(a => ({ ...a, image: `assets/${a.image}`, quantity: 0, visible: true })).slice(0, 8)
+                    articles: action.articles.map(a => ({ ...a, image: `assets/${a.image}`, quantity: 0, visible: true }))
                 };
         case 'add_article':
             return {
@@ -101,7 +101,13 @@ const articlesReducer = (state: State, action: Action): State => {
 // https://dev.to/elisealcala/react-context-with-usereducer-and-typescript-4obm
 const initialState: State = { title1: '****************', title2: '****************', articles: [] };
 
-const ArticleContext = createContext<{ articlesState: State; articlesDispatch: Dispatch<Action>; }>({ articlesState: initialState, articlesDispatch: () => null });
+const ArticleContext = createContext<{ 
+  articlesState: State; 
+  articlesDispatch: Dispatch<Action>; 
+}>({ 
+  articlesState: initialState, 
+  articlesDispatch: () => null 
+});
 
 export const useArticleContext = () => useContext(ArticleContext);
 
