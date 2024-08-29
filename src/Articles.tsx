@@ -44,7 +44,7 @@ const articlesReducer = (state: State, action: Action): State => {
         case 'initialize':
             return {
                     ...state,
-                    articles: action.articles.map(a => ({ ...a, image: `assets/${a.image}`, quantity: 0, visible: true }))
+                    articles: action.articles.map(a => ({ ...a, image: `assets/${a.image}`, quantity: 0, visible: true })).slice(0, 8)
                 };
         case 'add_article':
             return {
@@ -122,12 +122,12 @@ export const App = () => {
 
 const Navbar = () => {
     return (
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark navbar-xs">
+      <nav className="navbar navbar-expand navbar-dark">
         <div className="container-fluid">
           <Link className="navbar-brand" to="/"></Link>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          {/* <button className="navbar-toggler" type="button" xxxdata-bs-toggle="collapse" xxxdata-bs-target="#navbarNav">
             <span className="navbar-toggler-icon"></span>
-          </button>
+          </button> */}
           <div className="collapse navbar-collapse" id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
@@ -266,7 +266,7 @@ const ButtonBar = () => {
   const { articlesState, articlesDispatch } = useContext(ArticleContext);
     return (
         <div className="d-flex flex-column">
-            <div className="m-1 buttonBox">
+            <div className="buttonBox">
                 <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => 
                   PrintService.printTicket(articlesState)
                     .then(_ => articlesDispatch({ type: 'clear' }) )
@@ -275,7 +275,7 @@ const ButtonBar = () => {
                     <i className="bi bi-printer"></i>
                 </button>
             </div>
-            <div className="m-1 buttonBox">
+            <div className="buttonBox">
                 <button className="btn btn-danger bg-gradient rounded-0" onClick={_ => articlesDispatch({ type: 'clear' }) }>
                     <i className="bi bi-trash3"></i>
                 </button>                
@@ -526,42 +526,42 @@ export const Prices = () => {
             {show && <AddArticleDialog onOk={onOk} onCancel={onCancel} />}
 
             <div className="flex-fill main-area" style={{backgroundColor: "#222"}}>
-              <div className="d-flex flex-column">
+              {/* <div className="d-flex flex-column"> */}
                   {articlesState.articles.map(p => (
                       <div key={p.name} className={`d-flex`}>
-                          <div className="m-1 imgBox">
+                          <div className="imgBox">
                               <img className="" src={p.image}/>
                           </div>
-                          <div className="m-1 buttonBox">
+                          <div className="buttonBox">
                               <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => increatePrice(p.name)}>
                                   <i className="bi bi-plus bigIcon"></i>
                               </button>
                           </div>
-                          <div className="m-1 bg-dark bg-gradient textBox priceBox">
+                          <div className="bg-dark bg-gradient textBox priceBox">
                               <strong>{p.price.toFixed(2)}</strong>
                           </div>
-                          <div className="m-1 buttonBox">
+                          <div className="buttonBox">
                               <button className="btn btn-primary bg-gradient rounded-0" onClick={_ => decreatePrice(p.name)}>
                                   <i className="bi bi-dash bigIcon"></i>
                               </button>
                           </div>
-                          <div className="m-1 buttonBox">
+                          <div className="buttonBox">
                               <button className={"btn bg-gradient rounded-0 " + (p.visible ? "btn-success" : "btn-secondary")} onClick={_ => toggleVisibility(p.name)}>
                                   { p.visible ? <i className="bi bi-check"></i> : <i className="bi bi-x"></i> }
                               </button>
                           </div>
-                          <div className="m-1 buttonBox">
+                          <div className="buttonBox">
                               <button className={"btn bg-gradient rounded-0 btn-danger"} onClick={async _ => await removeArticle(p.name)}>
                                   <i className="bi bi-trash3"></i>
                               </button>
                           </div>
-                          <div className="m-1 bg-dark bg-gradient textBox bigTextBox">
+                          <div className="bg-dark bg-gradient textBox bigTextBox">
                               <div className="ms-2">{p.name}</div>
                           </div>
                       </div>
                   ))}
               </div>
-            </div>
+            {/* </div> */}
         </>
     );
 }
