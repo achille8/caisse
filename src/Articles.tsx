@@ -221,7 +221,10 @@ const setLocalStorageValue = (key: string, value: any ) => {
 
 const TotalLine = () => {
     const { articlesState } = useContext(ArticleContext);
-    const total = articlesState.articles.filter(a => a.visible).reduce((a, x) => a + x.quantity * x.price, 0);
+    let total = articlesState.articles
+      .filter(a => a.visible)
+      .reduce((a, x) => a + x.quantity * x.price, 0);
+    total = Math.round(total * 100) / 100;
 
     return (
         <div className="p-1 textBox">
