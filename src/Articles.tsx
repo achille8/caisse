@@ -454,11 +454,11 @@ class PrintService {
 }
 
 const displayMessage = (message: string) : void => {
-    toast.info(message, { theme: "dark" });
+    toast.info(message, { theme: "dark", position: "top-left" });
 };
 
 const displayError = (message: string) : void => {
-  toast.error(message, { theme: "colored" });
+  toast.error(message, { theme: "colored", position: "top-left" });
 };
 
 function rightAlignNumber(num: number, totalWidth: number, decimals: number = 0, paddingChar = ' ') {

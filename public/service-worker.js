@@ -27,7 +27,7 @@ self.addEventListener('fetch', async event => {
 });
 */
 
-const cacheVersion = 'v1.4';
+const cacheVersion = 'v1.5.0';
 
 class ServiceWorkerOne {
 
