@@ -296,14 +296,15 @@ const ButtonBar = () => {
 
 class PrintService {
 
-    private static printCharacteristic: any = null;
+    private static _printCharacteristic: any = null;
+    private static _connectedPrinter: any = null;
 
     static get PrinterName() {
-      return this.printCharacteristic?.service.device.name;
+      return this._printCharacteristic?.service.device.name;
     }
     
     static async printTicket(articlesState: State): Promise<void> {
-        if (this.printCharacteristic) {
+        if (this._connectedPrinter && this._connectedPrinter.gatt.connected) {
             return this.print(articlesState)
               .then(() => displayMessage("Ticket imprimé"));
         } else {
@@ -317,10 +318,11 @@ class PrintService {
         // https://github.com/NielsLeenheer/EscPosEncoder/blob/master/README.md
         var SERVICE = '000018f0-0000-1000-8000-00805f9b34fb';
         var WRITE   = '00002af1-0000-1000-8000-00805f9b34fb';  
+        let localDevice: any;
         let nav: any = window.navigator;
-
         return nav.bluetooth.requestDevice({ filters: [{ services: [SERVICE] }] })
             .then((device: any) => { 
+              localDevice = device;
               return device.gatt.connect(); 
             })
             .then((server: any) => { 
@@ -330,7 +332,8 @@ class PrintService {
               return service.getCharacteristic(WRITE); 
             })
             .then((characteristic: any) => { 
-              return this.printCharacteristic = characteristic;
+              this._connectedPrinter = localDevice;
+              return this._printCharacteristic = characteristic;
             });
     }
 

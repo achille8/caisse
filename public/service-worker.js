@@ -27,6 +27,8 @@ self.addEventListener('fetch', async event => {
 });
 */
 
+const cacheVersion = 'v1.4';
+
 class ServiceWorkerOne {
 
     static run() {
@@ -35,15 +37,44 @@ class ServiceWorkerOne {
     }
 
     static onInstalled = (event) => {
+      // Remove old caches
         event.waitUntil(
-            caches.open('v1.0').then(cache => {
-                return cache.addAll([
-                    '/',
-                    '/assets/blanche.jpg',
-                ]);
+          (async () => {
+            const keys = await caches.keys();
+            return keys.map(async (cache) => {
+                console.log('>>>>>>>>>>>>> Service Worker: Removing old cache: '+cache);
+                return await caches.delete(cache);
             })
-        );
-    }
+          })()
+        )
+      };
+
+    // static onInstalled = (event) => {
+    //     // event.waitUntil(
+    //     //     caches.open('v1.0').then(cache => {
+    //     //         return cache.addAll([
+    //     //             '/',
+    //     //             '/assets/blanche.jpg',
+    //     //         ]);
+    //     //     })
+    //     // );
+    //     //const cacheBypassRequests = assets.map(url => new Request(url, {cache: 'reload'}));
+
+    //     self.caches.keys().then(keys => { keys.forEach(key => self.caches.delete(key)); })
+
+    //     event.waitUntil(
+
+
+
+    //       caches.keys().then(function(names) {
+    //         for (let name of names) console.log('#################################################' + name);
+    //         for (let name of names) caches.delete(name);
+
+
+
+    //       })
+    //     ); 
+    // }
 
     //static onFetched = (event) => event.respondWith(ServiceWorker.handleFetch(event.request));
 
@@ -73,11 +104,11 @@ class ServiceWorkerOne {
 
             caches.match(event.request)
               .then(matchResponse => {
-                  console.log('cache match >>>', event.request.method, event.request.url, event.request, matchResponse);
+                  //console.log('cache match >>>', event.request.method, event.request.url, event.request, matchResponse);
                   
                   return matchResponse || fetch(event.request).then(fetchResponse => {
-                      return caches.open('v1.0').then(cache => {
-                          console.log('cache put', event.request.url);                    
+                      return caches.open(cacheVersion).then(cache => {
+                          //console.log('cache put', event.request.url);                    
                           cache.put(event.request, fetchResponse.clone());
                           return fetchResponse;
                       });

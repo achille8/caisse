@@ -14,6 +14,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 )
 
 function registerServiceWorker(): void {
+  
+  console.log(`>>>>>>>>>>>>>>>>>>>>>> registerServiceWorker`);
+
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('/service-worker.js')
             .then((registration) =>

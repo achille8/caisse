@@ -51,6 +51,7 @@
     {"name":"Bt eau", "image":"bouteilles-eaux.jfif", "price":10},
     {"name":"Cafe", "image":"cafe.jfif", "price":2},
     {"name":"Chips", "image":"chips.jfif", "price":1},
+    {"name":"P Raclette", "image":"pain-raclette.jpg", "price":3.0},
     {"name":"Croque-Msr", "image":"croque-monsieur.jfif", "price":2.5},
     {"name":"Lasagne", "image":"lasagne.png", "price":8},
     {"name":"Ass apero", "image":"assiette-apero.jpg", "price":3},
@@ -67,5 +68,6 @@
     {"name":"Gauffre", "image":"gauffre.jfif", "price":2.5},
     {"name":"Crepe", "image":"crepe.jpg", "price":2},
     {"name":"Crepe acc.", "image":"crepe-chocolat.jfif", "price":2.5},
+    {"name":"Cookies", "image":"cookies.png", "price":1},
     {"name":"Barbe a PP", "image":"barbe-a-papa.jfif", "price":2.5}
 ]
