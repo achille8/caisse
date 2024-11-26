@@ -444,7 +444,7 @@ class PrintService {
             .encode());
           try {
             for (const line of lines) {
-                await this.printCharacteristic.writeValue(line);
+                await this._printCharacteristic.writeValue(line);
             }
         }
         catch (err: any) {
