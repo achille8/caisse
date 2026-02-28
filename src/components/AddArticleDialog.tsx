@@ -7,12 +7,11 @@ interface AddArticleDialogProps {
 
 export const AddArticleDialog = ({ onOk, onCancel }: AddArticleDialogProps) => {
   const [name, setName] = useState('');
-  const [searchText, setSearchText] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [imgBlob, setImgBlob] = useState<Blob | undefined>();
 
   const searchOnWeb = () => {
-    const query = searchText.trim() || name.trim() || 'boisson';
+    const query = name.trim() || 'boisson';
     window.open(
       `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`,
       '_blank'
@@ -43,31 +42,17 @@ export const AddArticleDialog = ({ onOk, onCancel }: AddArticleDialogProps) => {
           </div>
           <div className="modal-body d-flex flex-column gap-3">
 
-            {/* Step 1 — Name */}
             <div>
-              <label htmlFor="article-name" className="col-form-label">Nom de l'article</label>
-              <input
-                type="text"
-                className="form-control"
-                id="article-name"
-                maxLength={16}
-                placeholder="ex: Coca"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                autoFocus
-              />
-            </div>
-
-            <div>
-              <label htmlFor="google-image-search" className="col-form-label">Recherche Google Images</label>
+              <label htmlFor="google-image-search" className="col-form-label">Nom de l'article</label>
               <div className="input-group">
                 <input
                   type="text"
                   className="form-control"
                   id="google-image-search"
                   placeholder="ex: canette coca fond transparent"
-                  value={searchText}
-                  onChange={e => setSearchText(e.target.value)}
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  autoFocus
                 />
                 <button
                   type="button"
@@ -93,7 +78,7 @@ export const AddArticleDialog = ({ onOk, onCancel }: AddArticleDialogProps) => {
             </div>
 
             <small style={{ color: 'var(--clr-muted)' }}>
-              Trouvez l'image, <em>clic-droit → Copier l'image</em>, puis cliquez « Coller Image ».
+              Trouvez l'image, <em>long click → Copier l'image</em>, puis cliquez « Coller Image ».
             </small>
 
             {/* Step 3 — Preview */}
