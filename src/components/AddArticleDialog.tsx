@@ -7,11 +7,12 @@ interface AddArticleDialogProps {
 
 export const AddArticleDialog = ({ onOk, onCancel }: AddArticleDialogProps) => {
   const [name, setName] = useState('');
+  const [searchText, setSearchText] = useState('');
   const [imgUrl, setImgUrl] = useState('');
   const [imgBlob, setImgBlob] = useState<Blob | undefined>();
 
   const searchOnWeb = () => {
-    const query = name.trim() || 'boisson';
+    const query = searchText.trim() || name.trim() || 'boisson';
     window.open(
       `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`,
       '_blank'
@@ -57,16 +58,30 @@ export const AddArticleDialog = ({ onOk, onCancel }: AddArticleDialogProps) => {
               />
             </div>
 
+            <div>
+              <label htmlFor="google-image-search" className="col-form-label">Recherche Google Images</label>
+              <div className="input-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="google-image-search"
+                  placeholder="ex: canette coca fond transparent"
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className="btn btn-outline-warning"
+                  title="Rechercher une image sur Google Images"
+                  onClick={searchOnWeb}
+                >
+                  <i className="bi bi-search me-1"></i>Google Images
+                </button>
+              </div>
+            </div>
+
             {/* Step 2 — Search + paste */}
             <div className="d-flex align-items-center gap-2">
-              <button
-                type="button"
-                className="btn btn-outline-warning flex-fill"
-                title="Rechercher une image sur Google Images"
-                onClick={searchOnWeb}
-              >
-                <i className="bi bi-search me-1"></i>Google Images
-              </button>
               <button
                 type="button"
                 className="btn btn-info flex-fill"

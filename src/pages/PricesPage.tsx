@@ -38,7 +38,7 @@ export const PricesPage = () => {
       <div className="prices-header">
         <div className="p-1 textBox">
           <i className="bi bi-tag me-2" style={{ fontSize: 28 }}></i>
-          <strong>Prix</strong>
+          <strong>Prix en €</strong>
         </div>
         <button className="btn-add ms-auto me-2" onClick={() => setShowAdd(true)}>
           <i className="bi bi-plus-lg me-1"></i>Ajouter

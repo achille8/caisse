@@ -14,7 +14,7 @@ export const TotalLine = () => {
       <i className="bi bi-receipt me-2" style={{ fontSize: 28, color: 'var(--clr-muted)' }}></i>
       <strong style={{ fontSize: 32 }}>
         Total:{' '}
-        <span style={{ color: hasItems ? 'var(--clr-accent)' : 'var(--clr-text)' }}>
+        <span style={{ color: hasItems ? 'var(--clr-warning)' : 'var(--clr-text)' }}>
           {total.toFixed(2)} €
         </span>
       </strong>
