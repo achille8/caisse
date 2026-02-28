@@ -14,9 +14,8 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 );
 
 if ('serviceWorker' in navigator) {
-  const swUrl = `${import.meta.env.BASE_URL}service-worker.js`;
   navigator.serviceWorker
-    .register(swUrl)
+    .register('/service-worker.js')
     .then(registration => {
       console.log('SW registered, scope:', registration.scope);
     })
