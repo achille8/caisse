@@ -38,6 +38,11 @@ export const App = () => {
       return;
     }
 
+    if (location.pathname === '/parameters' && deltaX < 0) {
+      navigate('/prices');
+      return;
+    }
+
     const currentIndex = orderedRoutes.indexOf(location.pathname);
     if (currentIndex === -1) {
       return;

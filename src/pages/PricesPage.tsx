@@ -83,7 +83,7 @@ export const PricesPage = () => {
                 onClick={() => toggleVisibility(p.name)}
                 title={p.visible ? 'Masquer' : 'Afficher'}
               >
-                <i className={`bi ${p.visible ? 'bi-check-lg' : 'bi-x-lg'}`}></i>
+                <i className={`bi ${p.visible ? 'bi-eye' : 'bi-eye-slash'}`}></i>
               </button>
             </div>
             <div className="buttonBox">
