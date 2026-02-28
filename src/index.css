@@ -161,6 +161,21 @@ body {
   flex-shrink: 0;
 }
 
+.reorderStack {
+  width: 5vw;
+  height: 10vw;
+  min-width: 25px;
+  max-width: 50px;
+  min-height: 50px;
+  max-height: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
 .buttonBox .btn {
   width: 100%;
   height: 100%;
@@ -171,6 +186,16 @@ body {
   border-radius: 0;
   border: none;
   transition: filter var(--transition), transform var(--transition);
+}
+
+.reorderStack .btn.reorderBtn {
+  width: 100%;
+  height: 50%;
+  font-size: 22px;
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .buttonBox .btn:active {
@@ -202,7 +227,22 @@ body {
 
 /* Secondary: visibility off */
 .buttonBox .btn-secondary {
-  background: linear-gradient(135deg, #444466 0%, #333350 100%);
+  background: linear-gradient(135deg, #6b5b95 0%, #524878 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* Info: move up */
+.buttonBox .btn-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+/* Warning: move down */
+.buttonBox .btn-warning {
+  background: linear-gradient(135deg, #f5a623 0%, #d4911e 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  color: #fff;
 }
 
 /* ── Text / Info Boxes ───────────────────────────────────── */
@@ -385,6 +425,78 @@ i.bigIcon {
   border: none;
   font-size: 1.2rem;
   padding: 0.2rem 0.5rem;
+}
+
+/* ── Global button color overrides (prevent black/dark) ──── */
+.btn-secondary {
+  background: linear-gradient(135deg, #6b5b95 0%, #524878 100%) !important;
+  border-color: #6b5b95 !important;
+  color: #fff !important;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #7d6ba8 0%, #6b5b95 100%) !important;
+}
+
+.btn-outline-warning {
+  border-color: var(--clr-warning) !important;
+  color: var(--clr-warning) !important;
+  background: transparent !important;
+}
+
+.btn-outline-warning:hover {
+  background: var(--clr-warning) !important;
+  color: #fff !important;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+  border-color: #17a2b8 !important;
+  color: #fff !important;
+}
+
+.btn-info:hover {
+  background: linear-gradient(135deg, #1ab5cf 0%, #17a2b8 100%) !important;
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #f5a623 0%, #d4911e 100%) !important;
+  border-color: #f5a623 !important;
+  color: #fff !important;
+}
+
+.btn-warning:hover {
+  background: linear-gradient(135deg, #ffb840 0%, #f5a623 100%) !important;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--clr-accent) 0%, var(--clr-accent-dark) 100%) !important;
+  border-color: var(--clr-accent) !important;
+  color: #fff !important;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5aaeff 0%, var(--clr-accent) 100%) !important;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, var(--clr-danger) 0%, var(--clr-danger-dark) 100%) !important;
+  border-color: var(--clr-danger) !important;
+  color: #fff !important;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #f06078 0%, var(--clr-danger) 100%) !important;
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--clr-success) 0%, var(--clr-success-dark) 100%) !important;
+  border-color: var(--clr-success) !important;
+  color: #fff !important;
+}
+
+.btn-success:hover {
+  background: linear-gradient(135deg, #3ddb80 0%, var(--clr-success) 100%) !important;
 }
 
 /* ── Small helper buttons ────────────────────────────────── */

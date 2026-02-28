@@ -43,7 +43,7 @@ const ConfirmationModalContextProvider: React.FC<{ children: React.ReactNode }> 
               <div className="modal-body">{content.message}</div>
               <div className="modal-footer">
                 <button type="button" onClick={handleCancel} className="btn btn-secondary">
-                  Annuler
+                  <i className="bi bi-x-lg me-1"></i>Annuler
                 </button>
                 <button type="button" onClick={handleOk} className="btn btn-primary">
                   Confirmer

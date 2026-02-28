@@ -62,6 +62,20 @@ export const articlesReducer = (state: State, action: Action): State => {
           a.name === action.name ? { ...a, price: Math.max(0, a.price - 0.05) } : a
         ),
       };
+    case 'move_up': {
+      const idx = state.articles.findIndex(a => a.name === action.name);
+      if (idx <= 0) return state;
+      const arr = [...state.articles];
+      [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+      return { ...state, articles: arr };
+    }
+    case 'move_down': {
+      const idx = state.articles.findIndex(a => a.name === action.name);
+      if (idx < 0 || idx >= state.articles.length - 1) return state;
+      const arr = [...state.articles];
+      [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+      return { ...state, articles: arr };
+    }
     case 'clear':
       return { ...state, articles: state.articles.map(a => ({ ...a, quantity: 0 })) };
     case 'set_title1':

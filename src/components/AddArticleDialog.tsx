@@ -69,7 +69,7 @@ export const AddArticleDialog = ({ onOk, onCancel }: AddArticleDialogProps) => {
               </button>
               <button
                 type="button"
-                className="btn btn-secondary flex-fill"
+                className="btn btn-info flex-fill"
                 title="Coller une image depuis le presse-papiers"
                 onClick={pasteImg}
               >

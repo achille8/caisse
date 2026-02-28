@@ -11,6 +11,8 @@ export const PricesPage = () => {
   const increasePrice = (name: string) => articlesDispatch({ type: 'increate_price', name });
   const decreasePrice = (name: string) => articlesDispatch({ type: 'decreate_price', name });
   const toggleVisibility = (name: string) => articlesDispatch({ type: 'toggle_visibility', name });
+  const moveUp = (name: string) => articlesDispatch({ type: 'move_up', name });
+  const moveDown = (name: string) => articlesDispatch({ type: 'move_down', name });
 
   const removeArticle = async (name: string) => {
     const result = await modalContext.showConfirmation(
@@ -91,6 +93,22 @@ export const PricesPage = () => {
                 title="Supprimer"
               >
                 <i className="bi bi-trash3"></i>
+              </button>
+            </div>
+            <div className="reorderStack">
+              <button
+                className="btn btn-info bg-gradient rounded-0 reorderBtn"
+                onClick={() => moveUp(p.name)}
+                title="Monter"
+              >
+                <i className="bi bi-chevron-up"></i>
+              </button>
+              <button
+                className="btn btn-info bg-gradient rounded-0 reorderBtn"
+                onClick={() => moveDown(p.name)}
+                title="Descendre"
+              >
+                <i className="bi bi-chevron-down"></i>
               </button>
             </div>
             <div className="textBox bigTextBox">

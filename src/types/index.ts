@@ -21,6 +21,8 @@ export type Action =
   | { type: 'decreate_quantity'; name: string }
   | { type: 'increate_price'; name: string }
   | { type: 'decreate_price'; name: string }
+  | { type: 'move_up'; name: string }
+  | { type: 'move_down'; name: string }
   | { type: 'print_ticket' }
   | { type: 'set_title1'; title1: string }
   | { type: 'set_title2'; title2: string }
