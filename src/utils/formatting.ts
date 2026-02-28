@@ -12,9 +12,9 @@ export function leftAlignText(text: string, totalWidth: number, paddingChar = ' 
 }
 
 export function displayMessage(message: string): void {
-  toast.info(message, { theme: 'dark', position: 'top-left' });
+  toast.info(message, { theme: 'success', position: 'top-left', delay: 2000  });
 }
 
 export function displayError(message: string): void {
-  toast.error(message, { theme: 'colored', position: 'top-left' });
+  toast.error(message, { theme: 'error', position: 'top-left' });
 }
