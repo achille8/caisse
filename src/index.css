@@ -103,6 +103,10 @@ body {
   scrollbar-color: var(--clr-accent) var(--clr-bg-800);
 }
 
+.gesture-page-area {
+  touch-action: pan-y;
+}
+
 .main-area::-webkit-scrollbar {
   width: 4px;
 }
