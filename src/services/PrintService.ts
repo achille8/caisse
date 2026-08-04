@@ -82,6 +82,13 @@ export class PrintService {
     );
     lines.push(encoder.line('').line('').line('').line('').cut().encode());
 
+    if (articlesState.cashDrawerConnected) {  
+      const cashDrawerDeviceId = 0x00;
+      const cashDrawerPulseOn = 0x19;
+      const cashDrawerPulseOff = 0xFA;
+      lines.push(encoder.raw([0x1B, 0x70, cashDrawerDeviceId, cashDrawerPulseOn, cashDrawerPulseOff]).encode()); // Standard open drawer command
+    }
+
     const characteristic = this._printCharacteristic as any;
     try {
       for (const line of lines) {

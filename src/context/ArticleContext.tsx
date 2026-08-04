@@ -9,6 +9,10 @@ const initialState: State = {
   title1: '****************',
   title2: '****************',
   articles: [],
+  cashDrawerConnected: false,
+  cashDrawerDeviceId: 0x00,
+  cashDrawerPulseOn: 0x19,
+  cashDrawerPulseOff: 0xFA,
 };
 
 export const articlesReducer = (state: State, action: Action): State => {
@@ -82,6 +86,13 @@ export const articlesReducer = (state: State, action: Action): State => {
       return { ...state, title1: action.title1 };
     case 'set_title2':
       return { ...state, title2: action.title2 };
+    case 'set_cash_drawer_connected':
+      return { ...state, 
+        cashDrawerConnected: action.cashDrawerConnected,
+        cashDrawerDeviceId: action.cashDrawerDeviceId,
+        cashDrawerPulseOn: action.cashDrawerPulseOn,
+        cashDrawerPulseOff: action.cashDrawerPulseOff,
+       };
     case 'print_ticket':
       return state;
   }

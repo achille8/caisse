@@ -1,4 +1,4 @@
-﻿const APPLICATION_VERSION = '2026.0.0';
+﻿const APPLICATION_VERSION = '2026.8.4';
 const CACHE_VERSION = 'v2.0.0';
 const CACHE_NAME = `caisse-${CACHE_VERSION}`;
 

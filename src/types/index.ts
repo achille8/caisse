@@ -10,6 +10,10 @@ export interface State {
   title1: string;
   title2: string;
   articles: Article[];
+  cashDrawerConnected?: boolean;
+  cashDrawerDeviceId: number;
+  cashDrawerPulseOn: number;
+  cashDrawerPulseOff: number;
 }
 
 export type Action =
@@ -26,4 +30,10 @@ export type Action =
   | { type: 'print_ticket' }
   | { type: 'set_title1'; title1: string }
   | { type: 'set_title2'; title2: string }
+  | { type: 'set_cash_drawer_connected'; 
+      cashDrawerConnected: boolean;
+      cashDrawerDeviceId: number;
+      cashDrawerPulseOn: number;
+      cashDrawerPulseOff: number;
+   }
   | { type: 'clear' };
