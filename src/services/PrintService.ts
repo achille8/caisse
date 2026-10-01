@@ -146,6 +146,7 @@ export class PrintService {
     }
   }
 
+  /*
   private static appendTicketJournal(articlesState: State): void {
     const journalKey = 'printed-ticket-journal.csv';
     const timestamp = new Date().toISOString();
@@ -165,6 +166,7 @@ export class PrintService {
     const header = 'datetime;article;quantity;price;total';
     window.localStorage.setItem(journalKey, [existingJournal ?? header, ...entries].join('\n'));
   }
+*/
 
   private static escapeCsvValue(value: string): string {
     return `"${value.replace(/"/g, '""')}"`;
