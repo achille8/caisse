@@ -5,7 +5,7 @@ export const AppNavbar = () => {
     <nav className="navbar navbar-expand navbar-dark">
       <div className="container-fluid px-0">
         <span className="navbar-brand ms-3">
-          <i className="bi bi-cash-stack me-1"></i>Caisse
+          <i className="bi bi-cash-stack me-1"></i>Caisse 3
         </span>
         <div className="collapse navbar-collapse">
           <ul className="navbar-nav ms-auto">

@@ -19,6 +19,7 @@ export class PrintService {
         this.printMultipleTickets(articlesState) : 
         this.printSingleTicket (articlesState);
       await this.printLines(articlesState, lines);
+      //this.appendTicketJournal(articlesState);
       displayMessage('Ticket imprimé');
     } else {
       displayError('Impossible de se connecter à l\'imprimante');
@@ -140,12 +141,32 @@ export class PrintService {
     }
 
     const characteristic = this._printCharacteristic as any;
-    try {
-      for (const line of lines) {
-        await characteristic.writeValue(line);
-      }
-    } catch (err: any) {
-      displayError(err.message);
+    for (const line of lines) {
+      await characteristic.writeValue(line);
     }
-  }  
+  }
+
+  private static appendTicketJournal(articlesState: State): void {
+    const journalKey = 'printed-ticket-journal.csv';
+    const timestamp = new Date().toISOString();
+    const entries = articlesState.articles
+      .filter(article => article.visible && article.quantity > 0)
+      .map(article => [
+        timestamp,
+        this.escapeCsvValue(article.name),
+        article.quantity,
+        article.price.toFixed(2),
+        (article.quantity * article.price).toFixed(2),
+      ].join(';'));
+
+    if (entries.length === 0) return;
+
+    const existingJournal = window.localStorage.getItem(journalKey);
+    const header = 'datetime;article;quantity;price;total';
+    window.localStorage.setItem(journalKey, [existingJournal ?? header, ...entries].join('\n'));
+  }
+
+  private static escapeCsvValue(value: string): string {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
 }
