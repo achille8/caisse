@@ -166,9 +166,9 @@ export class PrintService {
     const header = 'datetime;article;quantity;price;total';
     window.localStorage.setItem(journalKey, [existingJournal ?? header, ...entries].join('\n'));
   }
-*/
 
   private static escapeCsvValue(value: string): string {
     return `"${value.replace(/"/g, '""')}"`;
   }
+  */
 }
